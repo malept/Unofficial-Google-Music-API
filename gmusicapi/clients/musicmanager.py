@@ -8,6 +8,8 @@ import webbrowser
 import httplib2  # included with oauth2client
 from oauth2client.client import OAuth2WebServerFlow, TokenRevokeError
 import oauth2client.file
+from six import string_types
+from six.moves import input as get_input
 
 import gmusicapi
 from gmusicapi.clients.shared import _Base
@@ -57,7 +59,7 @@ class Musicmanager(_Base):
           ``user_data_dir`` is used by default. Users can run::
 
               import gmusicapi.clients
-              print gmusicapi.clients.OAUTH_FILEPATH
+              print(gmusicapi.clients.OAUTH_FILEPATH)
 
           to see the exact location on their system.
 
@@ -74,18 +76,18 @@ class Musicmanager(_Base):
         flow = OAuth2WebServerFlow(*musicmanager.oauth)
 
         auth_uri = flow.step1_get_authorize_url()
-        print
-        print "Visit the following url:\n %s" % auth_uri
+        print()
+        print("Visit the following url:\n %s" % auth_uri)
 
         if open_browser:
-            print
-            print 'Opening your browser to it now...',
+            print()
+            print('Opening your browser to it now...',)
             webbrowser.open(auth_uri)
-            print 'done.'
-            print "If you don't see your browser, you can just copy and paste the url."
-            print
+            print('done.')
+            print("If you don't see your browser, you can just copy and paste the url.")
+            print()
 
-        code = raw_input("Follow the prompts,"
+        code = get_input("Follow the prompts,"
                          " then paste the auth code here and hit enter: ")
 
         credentials = flow.step2_exchange(code)
@@ -165,7 +167,7 @@ class Musicmanager(_Base):
         Return True on success; see :py:func:`login` for params.
         """
 
-        if isinstance(oauth_credentials, basestring):
+        if isinstance(oauth_credentials, string_types):
             oauth_file = oauth_credentials
             if oauth_file == OAUTH_FILEPATH:
                 utils.make_sure_path_exists(os.path.dirname(OAUTH_FILEPATH), 0o700)
@@ -356,7 +358,7 @@ class Musicmanager(_Base):
     #     #protocol incorrect here...
     #     return (quota.maximumTracks, quota.totalTracks, quota.availableTracks)
 
-    @utils.accept_singleton(basestring)
+    @utils.accept_singleton(string_types)
     @utils.empty_arg_shortcircuit(return_code='{}')
     def upload(self, filepaths, transcode_quality='320k', enable_matching=False):
         """Uploads the given filepaths.

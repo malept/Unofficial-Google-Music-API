@@ -6,6 +6,7 @@ from collections import namedtuple
 import sys
 
 from google.protobuf.descriptor import FieldDescriptor
+from six import reraise
 
 import gmusicapi
 from gmusicapi.compat import json
@@ -258,7 +259,7 @@ class Call(object):
                            e_message=e.message,
                            req_kwargs=safe_req_kwargs,
                            content=response.content)
-            raise CallFailure(err_msg, e.callname), None, trace
+            reraise(CallFailure(err_msg, e.callname), None, trace)
 
         except ValidationException as e:
             # TODO shouldn't be using formatting
@@ -288,7 +289,7 @@ class Call(object):
             return json.loads(text)
         except ValueError as e:
             trace = sys.exc_info()[2]
-            raise ParseException(str(e)), None, trace
+            reraise(ParseException(str(e)), None, trace)
 
     @staticmethod
     def _filter_proto(msg, make_copy=True):

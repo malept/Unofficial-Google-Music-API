@@ -19,10 +19,15 @@ else:  # 2.7
     import json  # noqa
 
 try:
+    long_type = long
+except NameError:
+    long_type = int
+
+try:
     from appdirs import AppDirs
     my_appdirs = AppDirs('gmusicapi', 'Simon Weber')
 except ImportError:
-    print 'warning: could not import appdirs; will use current directory'
+    print('warning: could not import appdirs; will use current directory')
 
     class FakeAppDirs(object):
         to_spoof = set([base + '_dir' for base in

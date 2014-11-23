@@ -17,9 +17,11 @@ import warnings
 
 from decorator import decorator
 from google.protobuf.descriptor import FieldDescriptor
+from six import exec_, string_types
+from six.moves import xrange
 
 from gmusicapi import __version__
-from gmusicapi.compat import my_appdirs
+from gmusicapi.compat import long_type, my_appdirs
 from gmusicapi.exceptions import CallFailure, GmusicapiWarning
 
 # this controls the crazy logging setup that checks the callstack;
@@ -29,7 +31,7 @@ per_client_logging = True
 
 # Map descriptor.CPPTYPE -> python type.
 _python_to_cpp_types = {
-    long: ('int32', 'int64', 'uint32', 'uint64'),
+    long_type: ('int32', 'int64', 'uint32', 'uint64'),
     float: ('double', 'float'),
     bool: ('bool',),
     str: ('string',),
@@ -281,7 +283,7 @@ def enforce_id_param(position=1):
     @decorator
     def wrapper(function, *args, **kw):
 
-        if not isinstance(args[position], basestring):
+        if not isinstance(args[position], string_types):
             raise ValueError("Invalid param type in position %s;"
                              " expected an id (did you pass a dictionary?)" % position)
 
@@ -302,7 +304,7 @@ def enforce_ids_param(position=1):
     def wrapper(function, *args, **kw):
 
         if ((not isinstance(args[position], (list, tuple)) or
-             not all([isinstance(e, basestring) for e in args[position]]))):
+             not all([isinstance(e, string_types) for e in args[position]]))):
             raise ValueError("Invalid param type in position %s;"
                              " expected ids (did you pass dictionaries?)" % position)
 
@@ -483,7 +485,7 @@ def transcode_to_mp3(filepath, quality='320k', slice_start=None, slice_duration=
 
     if isinstance(quality, int):
         cmd.extend(['-q:a', str(quality)])
-    elif isinstance(quality, basestring):
+    elif isinstance(quality, string_types):
         cmd.extend(['-b:a', quality])
     else:
         raise ValueError("quality must be int or string, but received %r" % quality)
@@ -535,7 +537,7 @@ def truncate(x, max_els=100, recurse_levels=0):
 
     try:
         if len(x) > max_els:
-            if isinstance(x, basestring):
+            if isinstance(x, string_types):
                 return x[:max_els] + '...'
 
             if isinstance(x, dict):
@@ -584,7 +586,7 @@ def empty_arg_shortcircuit(return_code='[]', position=1):
         if len(args[position]) == 0:
             # avoid polluting our namespace
             ns = {}
-            exec 'retval = ' + return_code in ns
+            exec_('retval = ' + return_code in ns)
             return ns['retval']
         else:
             return function(*args, **kw)

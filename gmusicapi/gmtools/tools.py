@@ -2,9 +2,14 @@
 
 """Tools for manipulating client-received Google Music data."""
 
+from __future__ import print_function
+
 import operator
 import re
 import collections
+
+from six import text_type
+from six.moves import input as get_input, reduce
 
 from gmusicapi.compat import Counter
 
@@ -191,8 +196,8 @@ class SongMatcher(object):
     ignore_caps = SearchModifier(
         # Change query and song to lowercase,
         # before comparing with ==.
-        unicode.lower,
-        unicode.lower,
+        text_type.lower,
+        text_type.lower,
         operator.eq
     )
 
@@ -222,13 +227,13 @@ class SongMatcher(object):
         :param results: list of results.
         """
 
-        print
-        print "Manual tiebreak for query:"
-        print build_query_rep(query).encode('utf-8')
-        print
-        print "Enter the number next to your choice:"
-        print
-        print "0: None of these."
+        print()
+        print("Manual tiebreak for query:")
+        print(build_query_rep(query).encode('utf-8'))
+        print()
+        print("Enter the number next to your choice:")
+        print()
+        print("0: None of these.")
 
         menu_lines = []
         key = 1
@@ -241,13 +246,13 @@ class SongMatcher(object):
 
             key += 1
 
-        print "\n".join(menu_lines)
+        print("\n".join(menu_lines))
 
         choice = -1
 
         while not (0 <= choice <= len(results)):
             try:
-                choice = int(raw_input("Choice: "))
+                choice = int(get_input("Choice: "))
             except:
                 pass
 

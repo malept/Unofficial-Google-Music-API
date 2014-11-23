@@ -7,6 +7,7 @@ import numbers
 import os
 import re
 
+from six import string_types
 
 # from gmusicapi.api import Api
 from gmusicapi.protocol.metadata import md_expectations
@@ -76,7 +77,7 @@ def modify_md(md_name, val):
         return possible[(val_i + 1) % len(possible)]
 
     # Generic handlers for other data types.
-    if isinstance(val, basestring):
+    if isinstance(val, string_types):
         return val + "_mod"
 
     # Need to check for bool first, bools are instances of Number for some reason.

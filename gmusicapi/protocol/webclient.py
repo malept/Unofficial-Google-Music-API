@@ -10,6 +10,7 @@ import string
 import sys
 from hashlib import sha1
 
+from six import reraise
 import validictory
 
 from gmusicapi.compat import json
@@ -103,7 +104,7 @@ class WcCall(Call):
             return validictory.validate(msg, cls._res_schema)
         except ValueError as e:
             trace = sys.exc_info()[2]
-            raise ValidationException(str(e)), None, trace
+            reraise(ValidationException(str(e)), None, trace)
 
     @classmethod
     def check_success(cls, response, msg):

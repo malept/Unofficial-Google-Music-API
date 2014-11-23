@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 from collections import namedtuple
 from functools import partial, update_wrapper
 from getpass import getpass
@@ -10,6 +12,7 @@ import sys
 from types import MethodType
 
 from proboscis import TestProgram
+from six.moves import input as get_input
 
 from gmusicapi.clients import Webclient, Musicmanager, Mobileclient, OAUTH_FILEPATH
 from gmusicapi.protocol.musicmanager import credentials_from_refresh_token
@@ -39,18 +42,18 @@ def prompt_for_wc_auth():
     """Return a valid (user, pass) tuple by continually
     prompting the user."""
 
-    print ("These tests will never delete or modify your music."
-           "\n\n"
-           "If the tests fail, you *might* end up with a test"
-           " song/playlist in your library, though."
-           "\n")
+    print("These tests will never delete or modify your music."
+          "\n\n"
+          "If the tests fail, you *might* end up with a test"
+          " song/playlist in your library, though."
+          "\n")
 
     wclient = Webclient()
     valid_wc_auth = False
 
     while not valid_wc_auth:
         print
-        email = raw_input("Email: ")
+        email = get_input("Email: ")
         passwd = getpass()
 
         valid_wc_auth = wclient.login(email, passwd)
@@ -71,7 +74,7 @@ def retrieve_auth():
 
     if not all([wc_kwargs[arg] for arg in ('email', 'password')]):
         if os.environ.get('TRAVIS'):
-            print 'on Travis but could not read auth from environ; quitting.'
+            print('on Travis but could not read auth from environ; quitting.')
             sys.exit(1)
 
         wc_kwargs.update(zip(['email', 'password'], prompt_for_wc_auth()))
@@ -132,9 +135,9 @@ def main():
     try:
         TestProgram(module=sys.modules[__name__]).run_and_exit()
     except SystemExit as e:
-        print
+        print()
         if noticer.seen_message:
-            print '(failing build due to log warnings)'
+            print('(failing build due to log warnings)')
             sys.exit(1)
 
         if e.code is not None:

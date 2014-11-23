@@ -13,6 +13,7 @@ from decorator import decorator
 from google.protobuf.message import DecodeError
 import mutagen
 from oauth2client.client import OAuth2Credentials
+from six import reraise, string_types
 
 from gmusicapi.compat import json
 from gmusicapi.exceptions import CallFailure
@@ -88,7 +89,7 @@ class MmCall(Call):
             res_msg.ParseFromString(response.content)
         except DecodeError as e:
             trace = sys.exc_info()[2]
-            raise ParseException(str(e)), None, trace
+            reraise(ParseException(str(e)), None, trace)
             pass
 
         return res_msg
@@ -386,7 +387,7 @@ class GetUploadSession(MmCall):
         # Insert the inline info.
         for key in inlined:
             payload = inlined[key]
-            if not isinstance(payload, basestring):
+            if not isinstance(payload, string_types):
                 payload = str(payload)
 
             message['createSessionRequest']['fields'].append(
